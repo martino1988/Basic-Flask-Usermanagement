@@ -1,0 +1,58 @@
+{% extends "admin.html" %}
+
+{% block content %}
+{% for message in get_flashed_messages() %}
+
+	<div class="alert alert-warning alert-dismissible fade show" role="alert">
+	  {{ message }}
+	</div>
+{% endfor %}
+
+	<h4>Benutzer bearbeiten</h4>
+
+    <table class="u-full-width">
+        <thead>
+            <tr>
+                <th>Benutzername</th>
+                <th>Email</th>
+                <th>Vorname</th>
+                <th>Nachname</th>
+                <th>Benechtigungen</th>
+                <th>Aktion</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for i in user_and_role_list %}
+        <tr>
+            <td>
+                {{ i[0] }}
+            </td>
+            <td>
+                {{ i[1] }}
+            </td>
+            <td>
+                {{ i[2] }}
+            </td>
+            <td>
+                {{ i[3] }}
+            </td>
+            <td>
+                <ul class="navigation" >
+                    {% for role in i[4] %}
+                    <li class="navigation-item">{{ role }}</li>
+                    {% endfor %}
+                </ul>
+
+
+            </td>
+            <td>
+                <a href="{{ url_for('show_delete_user', user_id=i[5]) }}">Löschen</a>
+                <a href="{{ url_for('show_profile', user_id=i[5]) }}">Bearbeiten</a>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+
+{% endblock %}

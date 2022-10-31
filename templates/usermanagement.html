@@ -1,0 +1,37 @@
+{% extends "admin.html" %}
+
+{% block content %}
+<h4>Übersicht Berechtigungen:</h4>
+
+    <table class="u-full-width">
+        <thead>
+            <tr>
+                <th>Benutzer</th>
+                {% for role in role_list %}
+                <th>{{role}}</th>
+                {% endfor %}
+                <th>Aktion</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for i in user_and_roles_list %}
+        <tr>
+            <td>
+                {{i[0]}}
+            </td>
+            {% for j in i[1] %}
+            <td>
+                <input type="checkbox" id="{{j[0]}}" disabled="disabled" name="{{j[0]}}" value="{{j[0]}}" {{j[1]}}>
+            </td>
+            {% endfor %}
+            <td>
+                <a href="{{ url_for('update_user_roles', id=i[2]) }}">Bearbeiten</a>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+
+
+{% endblock %}

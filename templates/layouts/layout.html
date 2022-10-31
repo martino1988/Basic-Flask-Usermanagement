@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Flask1</title>
+<!--    <link rel="stylesheet" href="/static/lib/normalize.css" />
+    <link rel="stylesheet" href="/static/lib/skeletal.css" />
+    <link rel="stylesheet" href="/static/lib/variables.css" />
+    <link rel="stylesheet" href="/static/lib/custom.css" />-->
+    <link rel="stylesheet" href="/static/lib/_normalize.css" />
+    <link rel="stylesheet" href="/static/lib/_skeleton.css" />
+    <link rel="stylesheet" href="/static/style.css"/>
+
+<!-- navbar code https://skeletal.peterme.net/#code-->
+</head>
+<body>
+    <div class="container">
+            <!-- Navigationsleiste wenn der User angemeldet ist-->
+        <div class="row">
+            {% if current_user.is_authenticated %}
+            <div class="ten columns">
+                <ul class="navbar">
+                    <li class="navigation-img">
+                        <img src="../../static/img/logo.png" height="50", width="100", style="margin-top:10px">
+                    </li>
+                    <li class="navigation-item">
+                    <a href="/dashboard">Dashboard</a>
+                    </li>
+
+                    <li class="navigation-item">
+                        <a href="/menu2">Menü 2</a>
+                    </li>
+                    <li class="navigation-item" >
+                        <a href="{{ url_for('show_profile', user_id=current_user.get_id()) }}">Userprofil</a>
+                    </li>
+                    <li class="navigation-item">
+                        <a href="/admin">Admin</a>
+                    </li>
+                    <li class="u-pull-right" >
+                        <a class="navigation-item">Login</a>
+                    </li>
+                    <li class="u-pull-right">
+                        <a class="navigation-item" href="{{url_for('logout') }} ">Log Out</a>
+                    </li>
+                </ul>
+            </div>
+
+            {% elif not current_user.is_authenticated %}
+            <div class="ten columns">
+                <ul class="navbar">
+                    <li class="navigation-img">
+                        <img src="../../static/img/logo.png" height="50", width="100", style="margin-top:10px">
+                    </li>
+                    <li class="navigation-item">
+                    <a >Dashboard</a>
+                    </li>
+
+                    <li class="navigation-item">
+                        <a >Menü 2</a>
+                    </li>
+                    <li class="navigation-item" >
+                        <a >Userprofil</a>
+                    </li>
+                    <li class="navigation-item">
+                        <a >Admin</a>
+                    </li>
+                    <li class="u-pull-right" >
+                        <a href="/login" class="navigation-item">Login</a>
+                    </li>
+                    <li class="u-pull-right">
+                        <a class="navigation-item" >Log Out</a>
+                    </li>
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="container">
+        {% block content %}
+
+        {% endblock %}
+    </div>
+</body>
+</html>

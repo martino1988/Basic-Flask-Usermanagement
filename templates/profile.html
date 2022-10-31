@@ -1,0 +1,106 @@
+{% extends "layouts/layout.html" %}
+
+
+{% block content %}
+{% for message in get_flashed_messages() %}
+
+	<div class="alert alert-warning alert-dismissible fade show" role="alert">
+	  {{ message }}
+	</div>
+{% endfor %}
+
+
+<div class="eight columns">
+	<h4>Benutzerdaten:</h4>
+	<form method="POST">
+		{{ userform.hidden_tag() }}
+		<table class="u-full-width">
+			<thead>
+				<tr>
+					<th></th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+			<tr>
+				<td>
+					{{ userform.id.label(class="form-label") }}
+				</td>
+				<td>
+					{{ userform.id.data }}
+				</td>
+			</tr>
+			<tr>
+				<td>
+					{{ userform.username.label(class="form-label") }}
+				</td>
+				<td>
+					{{ userform.username.data }}
+				</td>
+			</tr>
+			<tr>
+				<td>
+					{{ userform.email.label(class="form-label") }}
+				</td>
+				<td>
+					{{ userform.email(class="form-control") }}
+				</td>
+			</tr>
+			<tr>
+				<td>
+					{{ userform.first_name.label(class="form-label") }}
+				</td>
+				<td>
+					{{ userform.first_name(class="form-control") }}
+				</td>
+			</tr>
+			<tr>
+				<td>
+					{{ userform.last_name.label(class="form-label") }}
+				</td>
+				<td>
+					{{ userform.last_name(class="form-control") }}
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label class="form-label">Benutzrechte</label>
+				</td>
+				<td>
+					<ul class="navigation" >
+						{% for role in userform.roles %}
+							<li class="navigation-item">{{ role }}</li>
+						{% endfor %}
+					</ul>
+				</td>
+			</tr>
+			</tbody>
+		</table>
+		{{ userform.submit1(class="btn btn-secondary") }}
+	</form>
+	<br />
+	<br />
+	<h4>Passwort ändern:</h4>
+<div class="shadow p-3 mb-5 bg-body rounded">
+	<form method="POST">
+		{{ form.hidden_tag() }}
+		{{ form.password.label(class="form-label") }}
+		{{ form.password(class="form-control") }}
+		<br/>
+		{{ form.confirm.label(class="form-label") }}
+		{{ form.confirm(class="form-control") }}
+		<br/>
+		<br/>
+		{{ form.submit(class="btn btn-secondary") }}
+
+
+	</form>
+</div>
+</div>
+
+<div class="eight-columns">
+
+</div>
+
+
+{% endblock %}

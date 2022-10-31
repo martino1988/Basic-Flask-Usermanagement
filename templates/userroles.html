@@ -1,0 +1,37 @@
+{% extends "admin.html" %}
+
+{% block content %}
+<h4>Berechtigungen {{username}}</h4>
+
+
+<div class="six columns">
+    <form method="post">
+        <table class="u-full-width">
+        <thead>
+            <tr>
+                <th>Rolle</th>
+                <th>Berechtigt</th>
+<!--                <th>Aktion</th>-->
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in role_list %}
+        <tr>
+            <td>
+                <label for="{{item[0]}}">{{item[0]}}</label>
+            </td>
+            <td>
+                <input type="checkbox" id="{{item[0]}}" name="{{item[0]}}" value="{{item[0]}}" {{item[1]}}>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <input type="submit" value="Aktualisieren" />
+    </form>
+
+
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "layouts/layout.html" %}
+
+{% block content %}
+{% for message in get_flashed_messages() %}
+
+	<div class="alert alert-warning alert-dismissible fade show" role="alert">
+	  {{ message }}
+	</div>
+{% endfor %}
+<div class="eight columns">
+	<p>Dashboard</p>
+</div>
+
+{% endblock %}
