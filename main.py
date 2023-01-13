@@ -9,8 +9,10 @@ import models.messages as messages
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
-PATH = os.path.dirname(__file__)
 
+
+
+PATH = os.path.dirname(__file__)
 
 class ConfigClass(object):
     SECRET_KEY = secrets.token_hex(16)
@@ -70,6 +72,7 @@ class UserRoles(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     user_id = db.Column(db.Integer(), db.ForeignKey('users.id', ondelete='CASCADE'))
     role_id = db.Column(db.Integer(), db.ForeignKey('roles.id', ondelete='CASCADE'))
+
 
 
 with app.app_context():
