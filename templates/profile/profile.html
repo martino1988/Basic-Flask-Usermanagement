@@ -9,9 +9,9 @@
 	</div>
 {% endfor %}
 
+<h4>Benutzerdaten:</h4>
 
-<div class="eight columns">
-	<h4>Benutzerdaten:</h4>
+<div class="shadow p-3 mb-5 bg-body rounded">
 	<form method="POST">
 		{{ userform.hidden_tag() }}
 		<table class="u-full-width">
@@ -69,7 +69,7 @@
 				<td>
 					<ul class="navigation" >
 						{% for role in userform.roles %}
-							<li class="navigation-item">{{ role }}</li>
+							<li >{{ role }}  </li>&ensp;&ensp;
 						{% endfor %}
 					</ul>
 				</td>

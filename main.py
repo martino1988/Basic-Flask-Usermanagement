@@ -8,7 +8,6 @@ import models.models as model
 import models.messages as messages
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
-from flask_user import roles_required  # , UserManager, UserMixin, current_user
 
 PATH = os.path.dirname(__file__)
 
@@ -21,17 +20,8 @@ class ConfigClass(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False  # Avoids SQLAlchemy warning
     ## Test Database
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + PATH + '/database/test_database.db'
+    SQLALCHEMY_POOL_RECYCLE = 299
 
-    USER_APP_NAME = "SLA Inventur"  # Shown in and email templates and page footers
-    USER_ENABLE_EMAIL = True  # Enable email authentication
-    USER_ENABLE_USERNAME = False  # Disable username authentication
-    USER_EMAIL_SENDER_EMAIL = "noreply@example.com"
-    USER_ENABLE_CONFIRM_EMAIL = False
-    USER_ENABLE_FORGOT_PASSWORD = False
-    USER_ENABLE_REGISTRATION = False
-    USER_ENABLE_REGISTER = False
-    # USER_LOGIN_TEMPLATE = "login.html"
-    TESTING = False
 
 
 app = Flask(__name__)
@@ -168,7 +158,7 @@ def login():
         else:
             flash(messages.LOGIN_FAILED)
 
-    return render_template('login.html', form=form)
+    return render_template('base/login.html', form=form)
 
 
 #################################################################################
@@ -193,10 +183,19 @@ def logout():
 @app.route("/dashboard")
 @login_required
 def show_dashboard():
-    if role_checker(current_user, admin) or role_checker(current_user, read):
-        return render_template("dashboard.html")
+    if role_checker(current_user, read):
+
+        # Userstats:
+        user_query = User.query.order_by(User.id)
+        alle_user = [u for u in user_query]
+        alle_admins = []
+        for user in user_query:
+            if role_checker(user, messages.ROLENAME_FOR_ADMIN):
+                alle_admins.append(user)
+
+        return render_template("dashboards/dashboard.html", user=len(alle_user), admins=len(alle_admins))
     else:
-        return render_template("error.html", header=messages.ERROR_HEADER, error_message=messages.ACCESS_DENIED)
+        return render_template("base/error.html", header=messages.ERROR_HEADER, error_message=messages.ACCESS_DENIED)
 
 
 #################################################################################
@@ -209,9 +208,9 @@ def show_dashboard():
 @login_required
 def show_menu2():
     if role_checker(current_user, admin):
-        return render_template("menu2.html")
+        return render_template("dashboards/menu2.html")
     else:
-        return render_template("error.html", header=messages.ERROR_HEADER, error_message=messages.ACCESS_DENIED)
+        return render_template("base/error.html", header=messages.ERROR_HEADER, error_message=messages.ACCESS_DENIED)
 
 
 #################################################################################
@@ -278,26 +277,16 @@ def show_profile(user_id):
                 flash(messages.PASSWORD_CHANGE_FAILED)
                 return redirect(url_for('show_profile', user_id=id))
 
-        return render_template("profile.html", userform=userform, form=form, name=name, roles=roles, email=email,
+        return render_template("profile/profile.html", userform=userform, form=form, name=name, roles=roles, email=email,
                                firstname=firstname, lastname=lastname)
     else:
-        return render_template("error.html", header=messages.ERROR_HEADER, error_message=messages.ACCESS_DENIED)
+        return render_template("base/error.html", header=messages.ERROR_HEADER, error_message=messages.ACCESS_DENIED)
     #################################################################################
 
 
 #################################################################################
 ################################   ADMINBEREICH   ###############################
 #################################################################################
-
-##############################   UNTERMENÜ ADMIN   ##############################
-@app.route("/admin")
-@login_required
-def show_admin():
-    if role_checker(current_user, admin):
-        return render_template("admin.html")
-    else:
-        return render_template("error.html", header=messages.ERROR_HEADER, error_message=messages.ACCESS_DENIED)
-
 
 ############################   BENUTZER ANLEGEN   ##############################
 @app.route('/admin/register', methods=['GET', 'POST'])
@@ -323,9 +312,9 @@ def register():
                 db.session.commit()
             flash(messages.USER_ADDED.format(user_name, user_email))
             return redirect(url_for('register'))
-        return render_template('register.html', form=form)
+        return render_template('admin/register_user.html', form=form)
     else:
-        return render_template("error.html", header=messages.ERROR_HEADER, error_message=messages.ACCESS_DENIED)
+        return render_template("base/error.html", header=messages.ERROR_HEADER, error_message=messages.ACCESS_DENIED)
 
 ############################   BENUTZER BEARBEITEN   ##############################
 @app.route('/admin/update_user', methods=['GET', 'POST'])
@@ -342,9 +331,9 @@ def show_update_user():
             roles = get_roles(u)
             id = u.id
             user_list.append([username, email, firstname, lastname, roles, id])
-        return render_template("update_user.html", user_and_role_list=user_list)
+        return render_template("admin/update_user.html", user_and_role_list=user_list)
     else:
-        return render_template("error.html", header=messages.ERROR_HEADER, error_message=messages.ACCESS_DENIED)
+        return render_template("base/error.html", header=messages.ERROR_HEADER, error_message=messages.ACCESS_DENIED)
 
 
 ############################   BENUTZER LÖSCHEN   ##############################
@@ -363,13 +352,13 @@ def show_delete_user(user_id):
                 return redirect(url_for('show_update_user'))
 
             except:
-                return render_template("error.html", header=messages.ERROR_HEADER,
+                return render_template("base/error.html", header=messages.ERROR_HEADER,
                                        error_message=messages.USER_DELETE_FAILED)
         else:
-            return render_template("error.html", header=messages.ERROR_HEADER,
+            return render_template("base/error.html", header=messages.ERROR_HEADER,
                                    error_message=messages.USER_DELETE_FAILED_OWN_USER)
     else:
-        return render_template("error.html", header=messages.ERROR_HEADER, error_message=messages.ACCESS_DENIED)
+        return render_template("base/error.html", header=messages.ERROR_HEADER, error_message=messages.ACCESS_DENIED)
 
 
 ###########################   BERECHTIGUNGSÜBERSICHT   ###########################
@@ -396,9 +385,9 @@ def show_usermanagement():
                     user_roles.append([role, ""])
             user_and_roles_list.append([user.username, user_roles, user.id])
 
-        return render_template('usermanagement.html', role_list=role_list, user_and_roles_list=user_and_roles_list)
+        return render_template('admin/usermanagement.html', role_list=role_list, user_and_roles_list=user_and_roles_list)
     else:
-        return render_template("error.html", header=messages.ERROR_HEADER, error_message=messages.ACCESS_DENIED)
+        return render_template("base/error.html", header=messages.ERROR_HEADER, error_message=messages.ACCESS_DENIED)
 
 
 ######################   BENUTZERBERECHTIGUNGEN ANPASSEN   ##########################
@@ -445,15 +434,13 @@ def update_user_roles(id):
 
             return redirect(url_for('show_usermanagement'))
 
-        return render_template('userroles.html', username=user.username, role_list=role_list)  # , form=form)
+        return render_template('admin/userroles.html', username=user.username, role_list=role_list)  # , form=form)
     else:
-        return render_template("error.html", header=messages.ERROR_HEADER, error_message=messages.ACCESS_DENIED)
+        return render_template("base/error.html", header=messages.ERROR_HEADER, error_message=messages.ACCESS_DENIED)
 
 
 #################################################################################
 
 
 if __name__ == '__main__':
-    # application = create_app()
-    app.run(debug=True)
-    #app.run(host='192.168.178.24', port=5500)  # debug=True)
+    app.run(host='0.0.0.0', port=5500, debug=True)

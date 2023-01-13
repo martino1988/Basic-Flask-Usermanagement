@@ -1,12 +1,9 @@
-{% extends "admin.html" %}
+{% extends "layouts/layout.html" %}
 
 {% block content %}
 <h4>Berechtigungen {{username}}</h4>
-
-
-<div class="six columns">
     <form method="post">
-        <table class="u-full-width">
+        <table class="table table-striped table-bordered">
         <thead>
             <tr>
                 <th>Rolle</th>
@@ -27,11 +24,7 @@
         {% endfor %}
         </tbody>
     </table>
-    <input type="submit" value="Aktualisieren" />
+    <input class="btn btn-secondary" type="submit" value="Aktualisieren" />
     </form>
-
-
-
-</div>
 
 {% endblock %}
